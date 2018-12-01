@@ -1,5 +1,7 @@
 package cn.com.weather;
+
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,10 +15,13 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import org.litepal.crud.DataSupport;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import cn.com.weather.db.City;
 import cn.com.weather.db.County;
 import cn.com.weather.db.Province;
@@ -83,6 +88,13 @@ public class ChooseFragment extends Fragment {
                 } else if (currentLevel == LEVEL_CITY) {
                     selectedCity = cityList.get(position);
                     queryCounties();
+                } else if(currentLevel == LEVEL_COUNTY){
+                    String wetherId = countyList.get(position).getWetherId();
+                    Intent intent=new Intent(getActivity(),WeatherActivity.class);
+                    intent.putExtra("weather_id",wetherId);
+                    startActivity(intent);
+                    getActivity().finish();//销毁当前activity
+
                 }
 
 
