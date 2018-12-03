@@ -3,53 +3,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".WeatherActivity"
     android:background="@color/colorPrimary"
+    tools:context=".WeatherActivity"
 
     >
     <!--
         android:scrollbars="none":是将滚动条设置为没有
         android:overScrollMode="never"   禁止上下滚动
+        scaleType="centerCrop":  均衡的缩放图像  图像位于视图中央
+        fitsSystemWindows: 为系统状态栏留出空间
      -->
-    <ScrollView
+    <ImageView
+        android:id="@+id/bing_pic_img"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+
+
+        />
+
+
+    <ScrollView
         android:id="@+id/weather_layout"
-        android:scrollbars="none"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:overScrollMode="never"
-        >
+        android:scrollbars="none">
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <include layout="@layout/title"/>
-            <include layout="@layout/now"/>
-
-            <include layout="@layout/forecast"/>
-
-            <include layout="@layout/aqi"/>
-            <include layout="@layout/suggestion"/>
-
-
-
-
-
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true"
+            android:orientation="vertical">
+            <include layout="@layout/title" />
+            <include layout="@layout/now" />
+            <include layout="@layout/forecast" />
+            <include layout="@layout/aqi" />
+            <include layout="@layout/suggestion" />
         </LinearLayout>
 
 
-
-
-
-
-
-
-
     </ScrollView>
-
-
-
-
 
 
 </FrameLayout>
