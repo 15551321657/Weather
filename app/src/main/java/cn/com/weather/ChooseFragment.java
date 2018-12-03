@@ -84,6 +84,7 @@ public class ChooseFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (currentLevel == LEVEL_PROVINCE) {     //如果当前选中的级别为省的级别
                     selectedProvince = provinceList.get(position);
+                    Log.d(TAG, "onItemClick: 选中了省,开始走查询城市的方法===");
                     queryCities();
                 } else if (currentLevel == LEVEL_CITY) {
                     selectedCity = cityList.get(position);
@@ -125,6 +126,7 @@ public class ChooseFragment extends Fragment {
         titleText.setText("中国");
         backButton.setVisibility(View.GONE);//设置控件不可见
         provinceList = DataSupport.findAll(Province.class);//从数据库查询所有的省的数据
+        Log.d(TAG, "queryProvinces: 数据库有数据了吗?======="+provinceList);
         if (provinceList.size() > 0) {//说明数据库有数据
             dataList.clear();//清空用于缓存省市区的集合缓存
             for (Province province : provinceList) {  //遍历所有省 拿出省的名字
@@ -147,6 +149,7 @@ public class ChooseFragment extends Fragment {
      * 查询所有的城市 优先从数据库查询  没有再从服务器查询
      */
     private void queryCities() {
+        Log.d(TAG, "onItemClick: 开始走查询城市的方法===");
         titleText.setText(selectedProvince.getProvinceName());      //获得选中省份的名字
         backButton.setVisibility(View.VISIBLE);
         //查询选中的省下的城市
@@ -174,9 +177,11 @@ public class ChooseFragment extends Fragment {
      * 查询所有的县 先查询数据库 为空的话1再去服务器上查询
      */
     private void queryCounties() {
+        Log.d(TAG, "queryCounties: 开始走查询县的方法");
         titleText.setText(selectedCity.getCityName());
         backButton.setVisibility(View.VISIBLE);
         countyList = DataSupport.where("cityid=?", String.valueOf(selectedCity.getId())).find(County.class);
+        Log.d(TAG, "queryCounties: 查询到的县有"+countyList);
         if (countyList.size() > 0) {
             dataList.clear();
             for (County county : countyList) {
@@ -229,6 +234,7 @@ public class ChooseFragment extends Fragment {
                 String responseText = response.body().string();
                 Log.d(TAG, "onResponse: " + responseText);
                 boolean result = false;
+                Log.d(TAG, "onResponse: 传进来的类型为:"+type);
                 if ("province".equals(type)) {
                     //处理服务器返回的省的数据json数据 存储到数据库
                     result = Utility.handleProvinceResponse(responseText);
