@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -60,9 +61,10 @@ public class WeatherActivity extends AppCompatActivity {
 
     public TextView sportText;
 
-
     private String mWeatherId;
+
     private String TAG = "huangshun";
+
     private ImageView bingPicImg;
 
     @Override
@@ -75,6 +77,16 @@ public class WeatherActivity extends AppCompatActivity {
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
         setContentView(R.layout.activity_weather);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        navButton = (Button) findViewById(R.id.nav_button);
+        navButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         bingPicImg = (ImageView) findViewById(R.id.bing_pic_img);
         String bingPic = prefs.getString("bingPic", null);
@@ -85,6 +97,8 @@ public class WeatherActivity extends AppCompatActivity {
             loadBingPic();
         }
         //初始化各种控件
+        swipeRefresh= (SwipeRefreshLayout) findViewById(R.id.swip_refresh);
+        swipeRefresh.setColorSchemeResources(R.color.colorPrimary);         //设置下拉刷新进度条的颜色
         weatherLayout = (ScrollView) findViewById(R.id.weather_layout);     //找到天气的布局
         titleCity = (TextView) findViewById(R.id.title_city);               //标题
         titleUpdateTime = (TextView) findViewById(R.id.title_update_time);  //天气的更新时间
@@ -100,14 +114,22 @@ public class WeatherActivity extends AppCompatActivity {
         if (weatherString != null) {
             //有缓存时直接解析天气数据
             Weather weather = Utility.handleWeatherResponse(weatherString);
+            mWeatherId = weather.basic.weatherId;
             showWeatherInfo(weather);
         } else {
             //没有缓存去服务器查询数据
-            String weatherId = getIntent().getStringExtra("weather_id");
-            Log.d(TAG, "onCreate: 没有缓存去服务器查询数据 weatherId为::" + weatherId);
+            mWeatherId = getIntent().getStringExtra("weather_id");
+            Log.d(TAG, "onCreate: 没有缓存去服务器查询数据 weatherId为::" + mWeatherId);
             weatherLayout.setVisibility(View.INVISIBLE);
-            requestWeather(weatherId);
+            requestWeather(mWeatherId);
         }
+        //设置一个下拉刷新的监听器
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                requestWeather(mWeatherId);
+            }
+        });
     }
 
     /**
@@ -131,12 +153,14 @@ public class WeatherActivity extends AppCompatActivity {
                             editor.putString("weather", responseText);
                             editor.apply();
                             Log.d(TAG, "run: 调用showWeatherInfo方法之前走了");
+                            mWeatherId=weather.basic.weatherId;
                             showWeatherInfo(weather);
                             Log.d(TAG, "run: weather 天气的信息有:" + weather);
                         } else {
                             Log.d(TAG, "run: 获取天气信息失败requestWeather====");
                             Toast.makeText(WeatherActivity.this, "获取天气信息失败", Toast.LENGTH_SHORT).show();
                         }
+                        swipeRefresh.setRefreshing(false);      //表示刷新事件结束 并隐藏进度条
                     }
                 });
             }
@@ -149,6 +173,8 @@ public class WeatherActivity extends AppCompatActivity {
                     public void run() {
                         Log.d(TAG, "run   onFailure: 获取天气失败");
                         Toast.makeText(WeatherActivity.this, "获取天气信息失败", Toast.LENGTH_SHORT).show();
+                        swipeRefresh.setRefreshing(false);      //表示刷新事件结束 并隐藏进度条
+
                     }
                 });
             }

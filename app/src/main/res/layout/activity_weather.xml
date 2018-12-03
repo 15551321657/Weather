@@ -21,6 +21,19 @@
 
 
         />
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swip_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
 
 
     <ScrollView
@@ -44,6 +57,18 @@
 
 
     </ScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+        <fragment
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="cn.com.weather.ChooseFragment"
+            android:id="@+id/choose_area_fragment"
+            android:layout_gravity="start"
+            />
+
+
+
+    </android.support.v4.widget.DrawerLayout>
 
 
 </FrameLayout>
